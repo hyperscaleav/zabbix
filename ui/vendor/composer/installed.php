@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'zabbix/ui',
-        'pretty_version' => 'dev-master',
-        'version' => 'dev-master',
-        'reference' => 'a0847cdd2ef9779a5eca1dcee95d93fa79c6f92d',
+        'pretty_version' => '1.0.0+no-version-set',
+        'version' => '1.0.0.0',
+        'reference' => null,
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -65,9 +65,9 @@
             'dev_requirement' => false,
         ),
         'robrichards/xmlseclibs' => array(
-            'pretty_version' => '3.1.4',
-            'version' => '3.1.4.0',
-            'reference' => 'bc87389224c6de95802b505e5265b0ec2c5bcdbd',
+            'pretty_version' => '3.1.5',
+            'version' => '3.1.5.0',
+            'reference' => '03062be78178cbb5e8f605cd255dc32a14981f92',
             'type' => 'library',
             'install_path' => __DIR__ . '/../robrichards/xmlseclibs',
             'aliases' => array(),
@@ -101,9 +101,9 @@
             'dev_requirement' => false,
         ),
         'zabbix/ui' => array(
-            'pretty_version' => 'dev-master',
-            'version' => 'dev-master',
-            'reference' => 'a0847cdd2ef9779a5eca1dcee95d93fa79c6f92d',
+            'pretty_version' => '1.0.0+no-version-set',
+            'version' => '1.0.0.0',
+            'reference' => null,
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
