@@ -49,20 +49,20 @@ class CSla extends CApiService {
 				'operator' =>					['type' => API_INT32, 'in' => implode(',', [TAG_OPERATOR_LIKE, TAG_OPERATOR_EQUAL, TAG_OPERATOR_NOT_LIKE, TAG_OPERATOR_NOT_EQUAL, TAG_OPERATOR_EXISTS, TAG_OPERATOR_NOT_EXISTS])]
 			]],
 			'serviceids' =>					['type' => API_IDS, 'flags' => API_ALLOW_NULL | API_NORMALIZE, 'default' => null],
-			'filter' =>						['type' => API_FILTER, 'flags' => API_ALLOW_NULL, 'default' => null, 'fields' => ['slaid', 'name', 'period', 'slo', 'effective_date', 'timezone', 'status']],
+			'filter' =>						['type' => API_FILTER, 'flags' => API_ALLOW_NULL, 'default' => null, 'fields' => ['slaid', 'name', 'period', 'slo', 'effective_date', 'timezone', 'status', 'og_min_down_severity']],
 			'search' =>						['type' => API_FILTER, 'flags' => API_ALLOW_NULL, 'default' => null, 'fields' => ['name', 'timezone', 'description']],
 			'searchByAny' =>				['type' => API_BOOLEAN, 'default' => false],
 			'startSearch' =>				['type' => API_FLAG, 'default' => false],
 			'excludeSearch' =>				['type' => API_FLAG, 'default' => false],
 			'searchWildcardsEnabled' =>		['type' => API_BOOLEAN, 'default' => false],
 			// output
-			'output' =>						['type' => API_OUTPUT, 'in' => implode(',', ['slaid', 'name', 'period', 'slo', 'effective_date', 'timezone', 'status', 'description']), 'default' => API_OUTPUT_EXTEND],
+			'output' =>						['type' => API_OUTPUT, 'in' => implode(',', ['slaid', 'name', 'period', 'slo', 'effective_date', 'timezone', 'status', 'description', 'og_min_down_severity']), 'default' => API_OUTPUT_EXTEND],
 			'countOutput' =>				['type' => API_FLAG, 'default' => false],
 			'selectServiceTags' =>			['type' => API_OUTPUT, 'flags' => API_ALLOW_NULL | API_ALLOW_COUNT, 'in' => implode(',', ['tag', 'operator', 'value']), 'default' => null],
 			'selectSchedule' =>				['type' => API_OUTPUT, 'flags' => API_ALLOW_NULL | API_ALLOW_COUNT, 'in' => implode(',', ['period_from', 'period_to']), 'default' => null],
 			'selectExcludedDowntimes' =>	['type' => API_OUTPUT, 'flags' => API_ALLOW_NULL | API_ALLOW_COUNT, 'in' => implode(',', ['name', 'period_from', 'period_to']), 'default' => null],
 			// sort and limit
-			'sortfield' =>					['type' => API_STRINGS_UTF8, 'flags' => API_NORMALIZE, 'in' => implode(',', ['slaid', 'name', 'period', 'slo', 'effective_date', 'timezone', 'status', 'description']), 'uniq' => true, 'default' => []],
+			'sortfield' =>					['type' => API_STRINGS_UTF8, 'flags' => API_NORMALIZE, 'in' => implode(',', ['slaid', 'name', 'period', 'slo', 'effective_date', 'timezone', 'status', 'description', 'og_min_down_severity']), 'uniq' => true, 'default' => []],
 			'sortorder' =>					['type' => API_SORTORDER, 'default' => []],
 			'limit' =>						['type' => API_INT32, 'flags' => API_ALLOW_NULL, 'in' => '1:'.ZBX_MAX_INT32, 'default' => null],
 			// flags
@@ -158,6 +158,7 @@ class CSla extends CApiService {
 			'timezone' =>			['type' => API_STRING_UTF8, 'flags' => API_REQUIRED, 'in' => implode(',', array_merge([ZBX_DEFAULT_TIMEZONE], array_keys(CTimezoneHelper::getList()))), 'length' => DB::getFieldLength('sla', 'timezone')],
 			'status' =>				['type' => API_INT32, 'in' => implode(',', [ZBX_SLA_STATUS_DISABLED, ZBX_SLA_STATUS_ENABLED])],
 			'description' =>		['type' => API_STRING_UTF8, 'length' => DB::getFieldLength('sla', 'description')],
+			'og_min_down_severity' =>	['type' => API_INT32, 'in' => implode(',', range(0, 5)), 'default' => DB::getDefault('sla', 'og_min_down_severity')],
 			'service_tags' =>		['type' => API_OBJECTS, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'uniq' => [['tag', 'value']], 'fields' => [
 				'tag' =>				['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => DB::getFieldLength('sla_service_tag', 'tag')],
 				'operator' =>			['type' => API_INT32, 'in' => implode(',', [ZBX_SLA_SERVICE_TAG_OPERATOR_EQUAL, ZBX_SLA_SERVICE_TAG_OPERATOR_LIKE]), 'default' => DB::getDefault('sla_service_tag', 'operator')],
@@ -236,6 +237,7 @@ class CSla extends CApiService {
 			'timezone' =>			['type' => API_STRING_UTF8, 'in' => implode(',', array_merge([ZBX_DEFAULT_TIMEZONE], array_keys(CTimezoneHelper::getList()))), 'length' => DB::getFieldLength('sla', 'timezone')],
 			'status' =>				['type' => API_INT32, 'in' => implode(',', [ZBX_SLA_STATUS_DISABLED, ZBX_SLA_STATUS_ENABLED])],
 			'description' =>		['type' => API_STRING_UTF8, 'length' => DB::getFieldLength('sla', 'description')],
+			'og_min_down_severity' =>	['type' => API_INT32, 'in' => implode(',', range(0, 5))],
 			'service_tags' =>		['type' => API_OBJECTS, 'flags' => API_NOT_EMPTY, 'uniq' => [['tag', 'value']], 'fields' => [
 				'tag' =>				['type' => API_STRING_UTF8, 'flags' => API_REQUIRED | API_NOT_EMPTY, 'length' => DB::getFieldLength('sla_service_tag', 'tag')],
 				'operator' =>			['type' => API_INT32, 'in' => implode(',', [ZBX_SLA_SERVICE_TAG_OPERATOR_EQUAL, ZBX_SLA_SERVICE_TAG_OPERATOR_LIKE]), 'default' => DB::getDefault('sla_service_tag', 'operator')],
@@ -1058,7 +1060,7 @@ class CSla extends CApiService {
 		}
 
 		$db_sla = $this->get([
-			'output' => ['period', 'slo', 'timezone', 'effective_date'],
+			'output' => ['period', 'slo', 'timezone', 'effective_date', 'og_min_down_severity'],
 			'selectSchedule' => ['period_from', 'period_to'],
 			'selectExcludedDowntimes' => ['name', 'period_from', 'period_to'],
 			'slaids' => $options['slaid']
@@ -1324,7 +1326,9 @@ class CSla extends CApiService {
 							}
 						}
 
-						if ($prev_value == ZBX_SEVERITY_OK) {
+						// ZBX_SEVERITY_OK is -1; with default threshold 0, only OK counts as uptime
+						// (preserving original behavior). Higher thresholds treat lower severities as uptime.
+						if ($prev_value == ZBX_SEVERITY_OK || $prev_value < $db_sla['og_min_down_severity']) {
 							$cell['uptime'] += $uptime;
 						}
 						else {

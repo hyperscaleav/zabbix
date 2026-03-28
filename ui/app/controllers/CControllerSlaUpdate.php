@@ -39,6 +39,7 @@ class CControllerSlaUpdate extends CControllerSlaCreateUpdate {
 			'service_tags' =>		'required|array',
 			'description' =>		'required|string',
 			'status' =>				'in '.ZBX_SLA_STATUS_ENABLED,
+			'og_min_down_severity' =>	'in '.implode(',', range(0, 5)),
 			'excluded_downtimes' =>	'array'
 		];
 
@@ -105,7 +106,7 @@ class CControllerSlaUpdate extends CControllerSlaCreateUpdate {
 			'excluded_downtimes' =>	[]
 		];
 
-		$fields = ['slaid', 'name', 'slo', 'period', 'timezone', 'description', 'excluded_downtimes'];
+		$fields = ['slaid', 'name', 'slo', 'period', 'timezone', 'description', 'og_min_down_severity', 'excluded_downtimes'];
 
 		$this->getInputs($sla, $fields);
 

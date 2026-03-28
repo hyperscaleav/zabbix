@@ -65,6 +65,18 @@ $sla_tab = (new CFormGrid())
 		])
 	])
 	->addItem([
+		new CLabel(_('Minimum severity for downtime'), 'og_min_down_severity'),
+		new CFormField(
+			(new CSelect('og_min_down_severity'))
+				->setId('og_min_down_severity')
+				->setValue((int) $data['form']['og_min_down_severity'])
+				->addOptions(array_map(
+					fn(int $s) => new CSelectOption($s, CSeverityHelper::getName($s)),
+					range(TRIGGER_SEVERITY_NOT_CLASSIFIED, TRIGGER_SEVERITY_DISASTER)
+				))
+		)
+	])
+	->addItem([
 		new CLabel(_('Reporting period')),
 		new CFormField(
 			(new CRadioButtonList('period', (int) $data['form']['period']))

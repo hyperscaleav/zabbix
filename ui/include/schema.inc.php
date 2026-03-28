@@ -8929,6 +8929,12 @@ return [
 				'type' => DB::FIELD_TYPE_TEXT,
 				'length' => 65535,
 				'default' => ''
+			],
+			'og_min_down_severity' => [
+				'null' => false,
+				'type' => DB::FIELD_TYPE_INT,
+				'length' => 10,
+				'default' => '0'
 			]
 		]
 	],

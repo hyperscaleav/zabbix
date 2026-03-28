@@ -55,7 +55,7 @@ class CControllerSlaEdit extends CController {
 
 		if ($this->hasInput('slaid')) {
 			$this->sla = API::Sla()->get([
-				'output' => ['slaid', 'name', 'period', 'slo', 'effective_date', 'timezone', 'status', 'description'],
+				'output' => ['slaid', 'name', 'period', 'slo', 'effective_date', 'timezone', 'status', 'description', 'og_min_down_severity'],
 				'selectServiceTags' => ['tag', 'operator', 'value'],
 				'selectSchedule' => ['period_from', 'period_to'],
 				'selectExcludedDowntimes' => ['name', 'period_from', 'period_to'],
@@ -112,6 +112,7 @@ class CControllerSlaEdit extends CController {
 					'service_tags' => $this->sla['service_tags'],
 					'description' => $this->sla['description'],
 					'status' => $this->sla['status'],
+					'og_min_down_severity' => $this->sla['og_min_down_severity'],
 					'excluded_downtimes' => $this->sla['excluded_downtimes']
 				]
 			];
@@ -132,6 +133,7 @@ class CControllerSlaEdit extends CController {
 					],
 					'description' => $defaults['description'],
 					'status' => ZBX_SLA_STATUS_ENABLED,
+					'og_min_down_severity' => $defaults['og_min_down_severity'],
 					'excluded_downtimes' => []
 				]
 			];
